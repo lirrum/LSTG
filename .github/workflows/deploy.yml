@@ -3,7 +3,7 @@ name: 自动部署 MkDocs 网站
 on:
   push:
     branches: [ main ]
-
+    
 jobs:
   build-and-deploy:
     # 在 GitHub 提供的 Ubuntu 环境中运行
