@@ -1,0 +1,23 @@
+h1 {                          /* 居中显示H1标题 */
+    text-align: center;
+    width : 100%;
+}
+
+.md-typeset p {               /* 段首缩进 */ 
+    text-indent: 2em;
+    margin-bottom: 1em;
+    line-height: 1.6;
+}
+
+.md-typeset h1,
+.md-typeset h2,
+.md-typeset h3,
+.md-typeset h4,
+.md-typeset h5,
+.md-typeset h6,
+.md-typeset ul,
+.md-typeset ol,
+.md-typeset blockquote,
+.md-typeset pre {
+    text-indent: 0;
+}
