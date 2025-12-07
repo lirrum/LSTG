@@ -1,9 +1,15 @@
 name: Deploy MkDocs to GitHub Pages
 
 on:
-  # 当推送到 main 分支时触发部署
   push:
     branches: [ main ]
+    # 仅在关键文件变更时触发部署
+    paths:
+      - 'docs/**'
+      - 'mkdocs.yml'
+      - 'requirements.txt'
+      - 'lirrum_markdown/**'
+      - '.github/workflows/deploy.yml'
 
 jobs:
   deploy:
@@ -11,22 +17,40 @@ jobs:
     steps:
       - name: Checkout 代码
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # 获取完整历史，避免路径解析问题
 
       - name: 设置 Python 环境
         uses: actions/setup-python@v5
         with:
-          python-version: '3.8'  # 满足项目要求的 Python 版本（>=3.7）
+          python-version: '3.8'
+          cache: 'pip'  # 启用pip缓存加速依赖安装
+
+      - name: 缓存 Python 依赖
+        uses: actions/cache@v3
+        with:
+          path: |
+            ~/.cache/pip
+            **/__pycache__
+          key: ${{ runner.os }}-pip-${{ hashFiles('requirements.txt') }}
+          restore-keys: |
+            ${{ runner.os }}-pip-
 
       - name: 安装依赖
         run: |
           python -m pip install --upgrade pip
-          pip install -r requirements.txt  # 安装 mkdocs、主题及自定义扩展
+          pip install -r requirements.txt
+          pip list | grep -E "mkdocs|material|lirrum-markdown-extensions"  # 验证依赖安装
 
       - name: 构建 MkDocs 站点
-        run: mkdocs build  # 生成静态文件到 site 目录
+        run: |
+          mkdocs build --strict  # 严格模式，警告视为错误
+          ls -la ./site  # 验证构建输出
 
       - name: 部署到 GitHub Pages
         uses: peaceiris/actions-gh-pages@v4
         with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}  # 自动生成的令牌，无需手动配置
-          publish_dir: ./site  # 部署 site 目录下的内容
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./site
+          force_orphan: true  # 清理gh-pages分支旧文件
+          publish_branch: gh-pages
