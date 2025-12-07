@@ -1,39 +1,32 @@
-name: 自动部署 MkDocs 网站
-# 触发条件：main分支有代码推送时自动执行
+name: Deploy MkDocs to GitHub Pages
+
 on:
+  # 当推送到 main 分支时触发部署
   push:
     branches: [ main ]
-    
+
 jobs:
-  build-and-deploy:
-    # 在 GitHub 提供的 Ubuntu 环境中运行
+  deploy:
     runs-on: ubuntu-latest
     steps:
-      # 步骤1：拉取 main 分支的代码到虚拟环境
-      - name: 拉取代码
+      - name: Checkout 代码
         uses: actions/checkout@v4
 
-      # 步骤2：安装 Python（MkDocs 依赖 Python）
-      - name: 安装 Python
+      - name: 设置 Python 环境
         uses: actions/setup-python@v5
         with:
-          python-version: "3.11"  # 选择和本地一致的 Python 版本
+          python-version: '3.8'  # 满足项目要求的 Python 版本（>=3.7）
 
-      # 步骤3：安装 MkDocs 及主题
       - name: 安装依赖
         run: |
           python -m pip install --upgrade pip
-          pip install mkdocs mkdocs-material  # 安装 MkDocs 和 Material 主题
+          pip install -r requirements.txt  # 安装 mkdocs、主题及自定义扩展
 
-      # 步骤4：生成静态网站文件（对应本地的 mkdocs build）
-      - name: 构建静态网站
-        run: mkdocs build
+      - name: 构建 MkDocs 站点
+        run: mkdocs build  # 生成静态文件到 site 目录
 
-      # 步骤5：将生成的 site 文件夹部署到 gh-pages 分支
       - name: 部署到 GitHub Pages
         uses: peaceiris/actions-gh-pages@v4
         with:
-          # GitHub 自动提供的令牌，用于推送代码到 gh-pages 分支
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          # 部署的目录：MkDocs 生成的 site 文件夹
-          publish_dir: ./site
+          github_token: ${{ secrets.GITHUB_TOKEN }}  # 自动生成的令牌，无需手动配置
+          publish_dir: ./site  # 部署 site 目录下的内容
