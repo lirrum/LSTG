@@ -1,0 +1,5 @@
+mkdocs>=1.5
+mkdocs-material>=9.0
+markdown>=3.4
+# 原有其他依赖...
+-e .  # 【新增】关键！以可编辑模式安装当前目录下的lirrum_markdown扩展
