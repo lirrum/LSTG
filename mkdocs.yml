@@ -1,4 +1,4 @@
-site_name: Lirrum's Storage Tech Guide
+site_name: Plain Storage Tech Guide
 
 theme:
   name: material
@@ -10,7 +10,7 @@ theme:
     - content.code.copy     # 代码块复制按钮
     - content.tooltips      # 工具提示
     
-  palette:
+  palette: 
     - scheme: default
       primary: blue
       accent: light-blue
@@ -24,7 +24,7 @@ markdown_extensions:
       toc_depth: 6
       permalink: true
   - pymdownx.superfences
-  - lirrum_syntax
+  - lirrum_syntax           # 自定义Markdown语法
 
 extra_css:
   - stylesheets/extra.css?v=2
